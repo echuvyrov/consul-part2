@@ -5,7 +5,7 @@
       "tenant_id": "$(ARM_TENANT_ID)",
       "client_id": "$(ARM_CLIENT_ID)",
       "client_secret": "$(ARM_CLIENT_SECRET)",
-      "azure_location": null,
+      "azure_location": "east us",
       "resource_group_name": "consul",
       "consul_version": "$(CONSUL_VERSION)"
     },
