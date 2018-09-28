@@ -1,0 +1,9 @@
+{
+    "advertise_addr": "10.0.64.4",
+    "data_dir": "/opt/consul/data",
+    "client_addr": "0.0.0.0",
+    "log_level": "INFO",
+    "ui": true,
+    "retry_join": ["provider=azure tag_name=consul_datacenter tag_value=consul-westus subscription_id=d5079cf1-c06b-4aaa-8b93-e0e761b5590b tenant_id=72f988bf-86f1-41af-91ab-2d7cd011db47 client_id=3d4be924-5423-4811-a43f-03251fe67bd1 secret_access_key=4da9d920-8b34-41d4-9bf3-7b862e82f194"]
+  }
+  
