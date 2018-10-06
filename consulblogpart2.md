@@ -57,7 +57,7 @@ In the third scenario, Consul needs to become aware of Platform as a Service Off
 1. DevOps engineers create and deploy custom Consul Connect proxy that is able to create secure communication channels with PaaS services.
 2. PaaS services interact with proxy and, as a result, become fully Connect-aware.
 
-### Network Segmentation with Consul Connect
+### Service Segmentation with Consul Connect
 With Consul cluster and a set of services up and running and configured for Consul Connect, you can now use service policies to specify which services are allowed to talk to each other, thus segmenting the network without any networking middleware. The way you accomplish this segmentation is via the [use of intentions](https://www.consul.io/docs/connect/intentions.html), which can be defined using CLI, API or UI. For example, the following intention denies communication from db to web (connections will not be allowed).
 
 ```
