@@ -1,9 +1,9 @@
 ## Modern Service Mesh with Consul in Azure (Part 2)
 
-This is the second part of a two-part series introducing you to HashiCorp Consul on Azure. In the [first part](https://open.microsoft.com/2018/10/04/use-case-modern-service-discovery-consul-azure-part-1/), we took a look at the service discovery properties of Consul and deployed a Consul cluster in Azure. In this second part, we will discuss properties that turn Consul into a full-blown service mesh solution as of version 1.2. We will also look at how to make a variety of infrastrucure services in Azure, including Kubernetes and PaaS, Consul and service mesh-aware.
+This is the second part of a two-part series introducing you to HashiCorp Consul on Azure. In the [first part](https://open.microsoft.com/2018/10/04/use-case-modern-service-discovery-consul-azure-part-1/), we took a look at the service discovery properties of Consul and deployed a Consul cluster in Azure. In this second part, we will discuss properties that turn Consul into a full-blown service mesh solution as of version 1.2 and beyond. We will also look at how to make a variety of infrastructure services in Azure, including Kubernetes and PaaS, Consul and service mesh-aware.
 
 ### Service Mesh Properties in Consul
-By definition, service mesh solution should provide service discovery and configuration management mechanisms for a set of microservices. In Part 1, we saw that Consul has been designed from the beginning to be a service discovery and service configuration management tool. What Consul did not have until version 1.2, however, was the option to transparently (i.e., without application code changes) authorize and secure communication between services. With the introduction of Connect feature in Consul 1.2, this ability to secure services without making any assumptions about the security of underlying networking infrastructure, completed the feature set expected in a modern service mesh solution.
+By definition, service mesh solution should provide service discovery and runtime configuration management mechanisms for a set of microservices. In Part 1, we saw that Consul has been designed from the beginning to be a service discovery and service configuration management tool. What Consul did not have until version 1.2, however, was the option to transparently (i.e., without application code changes) authorize and secure communication between services. With the introduction of Connect feature in Consul 1.2, this ability to secure services without making any assumption about the underlying networking infrastructure, completed the core feature set expected in a modern service mesh solution.
 
 ### Do you need Service Mesh?
 Service mesh solutions have been getting a lot of attention as a necessary component of cloud-native infrastructure. And if you are deploying dozens or hundreds of microservices that need to discover and communicate with each other in a secure way, service mesh is the right tool for that job. Many Azure customers, however, are simply moving monolithic applications into the cloud or developing applications that don't have the type of east-west (a convention used to refer to service-to-service communication) traffic patterns that service mesh was designed to help with. For the use cases where you have very few microservices present, you don't have to activate Connect properties of Consul; you can continue using Consul as a pure service discovery and config engine. 
@@ -15,7 +15,9 @@ Consul Connect uses proxy sidecars to enable secure inbound and outbound communi
 
 ![Consul Architecture Cropped](https://github.com/echuvyrov/consul-part2/blob/master/architecture_cropped.png)
 
-The application code for running services never becomes aware of the existence of Connect. The proxy for each service is automatically started when the configuration of the Consul agent running that service includes a [special "connect" property](https://www.consul.io/intro/getting-started/connect.html). Within that property, the service can define upstream dependent services that it needs to communicate with over Connect, and all requests to those services will be authorized and go over secure TLS channels.
+The application code for running services never becomes aware of the existence of Connect. The proxy for each service is automatically started when the configuration of the Consul agent running that service includes a [special "connect" property](https://www.consul.io/intro/getting-started/connect.html). Within that property, the service can define upstream dependent services that it needs to communicate with over Connect, and all requests to those services will be authorized and go over secure TLS channels. 
+
+For high performance services, Consul provides the option of [native application integration](https://www.consul.io/docs/connect/native.html) to reduce latency by avoiding the overhead of a proxy, but it does require some application code changes.
 
 But how do we deploy Consul agents into various infrastructure environments in Azure?
 
@@ -55,7 +57,7 @@ In the third scenario, Consul needs to become aware of Platform as a Service Off
 1. DevOps engineers create and deploy custom Consul Connect proxy that is able to create secure communication channels with PaaS services.
 2. PaaS services interact with proxy and, as a result, become fully Connect-aware.
 
-### Network Segmentation with Consul Connect
+### Service Segmentation with Consul Connect
 With Consul cluster and a set of services up and running and configured for Consul Connect, you can now use service policies to specify which services are allowed to talk to each other, thus segmenting the network without any networking middleware. The way you accomplish this segmentation is via the [use of intentions](https://www.consul.io/docs/connect/intentions.html), which can be defined using CLI, API or UI. For example, the following intention denies communication from db to web (connections will not be allowed).
 
 ```
